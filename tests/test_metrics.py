@@ -41,4 +41,5 @@ def test_marketplace_health_exposes_supply_concentration() -> None:
     assert report.acceptance_rate == pytest.approx(2 / 3)
     assert report.completion_rate == pytest.approx(1 / 3)
     assert report.supply_exposure_hhi == pytest.approx(4 / 9)
+    assert report.mean_supply_utilization == 0
     assert report.throughput_per_second == 2

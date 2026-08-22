@@ -75,10 +75,12 @@ def run_policy_experiment(
         accepted = False
         completed = False
         provider_id = None
+        provider_utilization = 0.0
         if top:
             attempt = state.attempt_match(request, top.row.offer_id)
             accepted = attempt.accepted
             provider_id = top.row.provider_id
+            provider_utilization = state.offers[top.row.offer_id].utilization
             if accepted:
                 completed = state.complete_match(request.request_id).completed
         events.append(
@@ -89,6 +91,7 @@ def run_policy_experiment(
                 accepted=accepted,
                 completed=completed,
                 latency_ms=(perf_counter() - decision_started_at) * 1_000,
+                provider_utilization=provider_utilization,
             )
         )
 

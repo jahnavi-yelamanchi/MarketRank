@@ -26,6 +26,7 @@ class OnlineMatchEvent:
     accepted: bool
     completed: bool
     latency_ms: float
+    provider_utilization: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -34,6 +35,7 @@ class MarketplaceHealthReport:
     acceptance_rate: float
     completion_rate: float
     supply_exposure_hhi: float
+    mean_supply_utilization: float
     mean_latency_ms: float
     throughput_per_second: float
 
@@ -89,6 +91,7 @@ def evaluate_marketplace_health(
         acceptance_rate=accepted / attempts,
         completion_rate=completed / attempts,
         supply_exposure_hhi=exposure_hhi,
+        mean_supply_utilization=sum(event.provider_utilization for event in events) / attempts,
         mean_latency_ms=sum(event.latency_ms for event in events) / attempts,
         throughput_per_second=attempts / elapsed_seconds,
     )
