@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytest
 
+from marketrank.retrieval.candidates import CandidateRetriever
 from marketrank.simulation.marketplace import (
     Location,
     MarketplaceRequest,
@@ -72,3 +73,15 @@ def test_acceptance_reserves_inventory_and_capacity_until_completion() -> None:
 
 def test_distance_is_approximately_one_degree_of_latitude() -> None:
     assert haversine_km(Location(0, 0), Location(1, 0)) == pytest.approx(111.2, abs=0.2)
+
+
+def test_retrieval_expands_radius_only_for_sparse_supply() -> None:
+    distant = offer(location=Location(-23.85, -46.63))
+    state = MarketplaceState({distant.offer_id: distant})
+
+    retriever = CandidateRetriever(minimum_candidates=1, maximum_radius_km=50)
+    result = retriever.retrieve(request=request(), state=state)
+
+    assert result.fallback == "expanded_radius"
+    assert result.applied_radius_km == 40
+    assert [candidate.offer.offer_id for candidate in result.candidates] == ["o1"]

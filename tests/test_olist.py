@@ -1,6 +1,7 @@
 import pandas as pd
 import pytest
 
+from marketrank.data.marketplace import build_olist_marketplace_seed
 from marketrank.data.olist import DataValidationError, OlistDataset, validate_olist_dataset
 
 
@@ -67,3 +68,13 @@ def test_dangling_provider_is_rejected() -> None:
 
     with pytest.raises(DataValidationError, match="dangling"):
         validate_olist_dataset(dataset)
+
+
+def test_olist_history_builds_geolocated_marketplace_entities() -> None:
+    dataset = valid_dataset()
+    dataset.geolocation.loc[1] = [10001, -23.51, -46.61]
+
+    seed = build_olist_marketplace_seed(dataset)
+
+    assert seed.offers[0].provider_id == "s1"
+    assert seed.requests[0].user_id == "u1"
