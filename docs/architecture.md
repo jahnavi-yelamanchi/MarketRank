@@ -68,18 +68,16 @@ explainable ranked matches + decision event
 
 ## Ranking formulation
 
-The learned ranker estimates the probability that an eligible provider accepts and
-completes a request. LambdaMART is the target model because it directly optimizes
-ordering within each request. A calibrated binary classifier is retained as a simpler
-baseline.
+The learned ranker estimates a simulated acceptance-and-completion utility proxy for
+an eligible provider. LambdaMART is the target model because it directly optimizes
+ordering within each request. A binary classifier is retained as a simpler baseline.
 
 The reranker combines the learned utility with bounded marketplace adjustments:
 
 ```text
 final_score = ranker_score
-            + quality_bonus + preference_bonus + freshness_bonus
-            - price_penalty - delivery_penalty
-            + exposure_adjustment + utilization_adjustment
+            + price_fit_bonus
+            - utilization_penalty - exposure_penalty - diversity_penalty
 ```
 
 Hard constraints are not score terms. An unavailable, full, incompatible, distant, or
@@ -87,11 +85,11 @@ over-budget offer is removed before ranking.
 
 ## Objectives and metrics
 
-Offline ranking: Recall@K, NDCG@K, MRR, MAP, calibration, and acceptance/completion
-proxy, segmented by supply density and cold-start state.
+Offline ranking: Recall@K, NDCG@K, MRR, MAP, and acceptance proxy, segmented by
+supply density and cold-start state.
 
-Online-style simulation: completion rate, no-match rate, mean price, predicted delivery
-time, provider utilization, exposure concentration, p50/p95 latency, and throughput.
+Online-style simulation: completion rate, no-match rate, mean provider utilization,
+exposure concentration, latency, and throughput.
 
 Policy reports compare heuristic, nearest, cheapest, highest-rated, binary-ML, and
 LambdaMART policies. The report makes tradeoffs explicit: conversion versus price,
@@ -104,8 +102,9 @@ user utility versus exposure fairness, and quality versus serving latency.
   then reports no feasible match rather than returning impossible supply.
 - **Cold start:** use category/location priors for a new user and Bayesian-smoothed
   provider quality for a new provider.
-- **Observability:** every response has a request ID, policy/model version, latency,
-  candidate counts, constraints, and selected-result features.
+- **Observability:** every decision event has a request ID, policy/model version,
+  latency, candidate count, fallback, and selected result. API responses expose the
+  policy, constraints, score, features, and reasons for every returned match.
 
 ## Scale path
 
