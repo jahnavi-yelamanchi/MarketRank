@@ -9,6 +9,8 @@ lint:
 test:
 	uv run pytest
 
+benchmark:
+	uv run python scripts/benchmark_serving.py --iterations 250 --workers 8
+
 run:
 	uv run uvicorn marketrank.api:app --reload
-
