@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MarketRank</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/">MarketRank</a>
+      <span class="header-note">Constraint-aware matching</span>
+    </header>
+    <main>
+      <div class="stage">
+        <form id="request-form" class="request-panel">
+          <p class="eyebrow">Marketplace request</p>
+          <h1>Find a feasible match</h1>
+          <label>Category<input name="category" value="Books" required /></label>
+          <label>Delivery location<input name="location" value="São Paulo" aria-label="Delivery location" /></label>
+          <p class="coordinates">-23.5505, -46.6333</p>
+          <label>Budget (USD)<input name="budget" type="number" min="1" value="30" required /></label>
+          <label>Service radius<input name="radius" type="number" min="1" value="50" required /></label>
+          <button type="submit">Find feasible matches <span aria-hidden="true">→</span></button>
+        </form>
+
+        <div class="decision-panel">
+          <section class="results-panel" aria-live="polite">
+            <div class="results-heading"><h2>Ranked matches</h2><span id="policy"></span></div>
+            <div class="table-head" aria-hidden="true">
+              <span>Rank</span><span>Provider</span><span>Distance</span><span>Price</span><span>Score</span>
+            </div>
+            <div id="matches" class="matches"></div>
+            <p id="empty-state" class="empty">Submit a request to inspect live, feasible supply.</p>
+          </section>
+          <aside class="inspector" id="inspector">
+            <p class="inspector-empty">Select a ranked match to inspect its decision evidence.</p>
+          </aside>
+        </div>
+      </div>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

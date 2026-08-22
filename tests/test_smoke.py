@@ -28,3 +28,10 @@ def test_match_endpoint_returns_explainable_feasible_supply() -> None:
     assert body["policy"] == "heuristic_fallback"
     assert len(body["matches"]) == 3
     assert "ranking_features" in body["matches"][0]
+
+
+def test_interface_is_served() -> None:
+    response = TestClient(app).get("/")
+
+    assert response.status_code == 200
+    assert "Marketplace request" in response.text

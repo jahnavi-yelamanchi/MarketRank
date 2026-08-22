@@ -1,6 +1,10 @@
 """HTTP service entry point for explainable marketplace matching."""
 
+from pathlib import Path
+
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from marketrank.serving.service import (
@@ -11,6 +15,8 @@ from marketrank.serving.service import (
 
 app = FastAPI(title="MarketRank", version="0.1.0")
 service = MarketplaceMatchingService(demo_marketplace_state())
+static_dir = Path(__file__).parent / "static"
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 
 class MatchRequestBody(BaseModel):
@@ -28,6 +34,12 @@ class MatchRequestBody(BaseModel):
 def health() -> dict[str, str]:
     """Provide a dependency-free container health check."""
     return {"status": "ok"}
+
+
+@app.get("/", include_in_schema=False)
+def interface() -> FileResponse:
+    """Serve the dependency-free ranking-inspection interface."""
+    return FileResponse(static_dir / "index.html")
 
 
 @app.post("/v1/matches")
