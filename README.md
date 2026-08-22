@@ -51,7 +51,7 @@ make test
 make run
 ```
 
-Open `http://localhost:8000` for the ranking inspector. It ships with a deterministic
+Open `http://localhost:8001` for the ranking inspector. It ships with a deterministic
 in-memory marketplace so no data download is required for exploration.
 
 ```bash

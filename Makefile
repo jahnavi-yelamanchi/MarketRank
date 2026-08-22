@@ -1,3 +1,5 @@
+PORT ?= 8001
+
 .PHONY: install lint test run
 
 install:
@@ -16,4 +18,4 @@ train-demo:
 	uv run python scripts/train_demo.py --requests 120 --seed 7
 
 run:
-	uv run uvicorn marketrank.api:app --reload
+	uv run uvicorn marketrank.api:app --reload --port $(PORT)
