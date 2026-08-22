@@ -35,3 +35,20 @@ def test_interface_is_served() -> None:
 
     assert response.status_code == 200
     assert "Marketplace request" in response.text
+
+
+def test_match_endpoint_supports_makeup_demo_supply() -> None:
+    response = TestClient(app).post(
+        "/v1/matches",
+        json={
+            "request_id": "makeup-demo",
+            "user_id": "new-user",
+            "category": "makeup",
+            "latitude": -23.55,
+            "longitude": -46.63,
+            "budget": 30,
+        },
+    )
+
+    assert response.status_code == 200
+    assert len(response.json()["matches"]) == 3

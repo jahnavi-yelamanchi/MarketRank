@@ -133,5 +133,14 @@ def demo_marketplace_state() -> MarketplaceState:
             "books-c", "city-readers", "books", Location(-23.66, -46.68), 17, 0.73, 0.85, 12, 4
         ),
         SupplyOffer("groceries-a", "fresh-route", "groceries", location, 35, 0.9, 0.94, 15, 5),
+        SupplyOffer(
+            "makeup-a", "lumiere-beauty", "makeup", Location(-23.57, -46.62), 28, 0.94, 0.97, 10, 4
+        ),
+        SupplyOffer(
+            "makeup-b", "studio-color", "makeup", Location(-23.61, -46.64), 22, 0.84, 0.93, 7, 3
+        ),
+        SupplyOffer(
+            "makeup-c", "daily-glow", "makeup", Location(-23.64, -46.60), 18, 0.76, 0.88, 11, 4
+        ),
     ]
     return MarketplaceState({offer.offer_id: offer for offer in offers})

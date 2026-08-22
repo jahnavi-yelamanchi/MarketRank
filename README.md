@@ -9,7 +9,7 @@ over capacity, out of inventory, too far away, above budget, or repeatedly absor
 all demand. MarketRank makes those operational conditions first-class inputs to a
 real-time decision.
 
-![MarketRank's monochrome ranking inspector on liquid iridescence](src/marketrank/static/assets/liquid-iridescence.png)
+![MarketRank's monochrome ranking inspector on liquid iridescence](docs/assets/marketrank-ui.png)
 
 ## Product problem
 
