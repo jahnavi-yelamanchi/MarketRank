@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from time import perf_counter
 
 from marketrank.features.point_in_time import FeatureContext, compute_features
+from marketrank.monitoring.observability import DecisionLog, decision_event
 from marketrank.ranking.baselines import rank_baseline
 from marketrank.reranking.policy import ConstraintAwareReranker
 from marketrank.retrieval.candidates import CandidateRetriever
@@ -55,8 +57,10 @@ class MarketplaceMatchingService:
         self.model = model
         self.retriever = CandidateRetriever()
         self.reranker = ConstraintAwareReranker()
+        self.decision_log = DecisionLog()
 
     def match(self, match_input: MatchInput) -> MatchResponse:
+        started_at = perf_counter()
         request = MarketplaceRequest(
             request_id=match_input.request_id,
             user_id=match_input.user_id,
@@ -76,7 +80,7 @@ class MarketplaceMatchingService:
         policy = "lambdamart" if self.model else "heuristic_fallback"
         ranked = self.model.rank(features) if self.model else rank_baseline(features, "heuristic")
         reranked = self.reranker.rerank(request, self.state, ranked)
-        return MatchResponse(
+        response = MatchResponse(
             request_id=request.request_id,
             policy=policy,
             fallback=retrieval.fallback,
@@ -92,6 +96,19 @@ class MarketplaceMatchingService:
                 for candidate in reranked.candidates
             ],
         )
+        first_result = response.results[0] if response.results else None
+        self.decision_log.record(
+            decision_event(
+                request_id=response.request_id,
+                policy=response.policy,
+                fallback=response.fallback,
+                candidate_count=len(retrieval.candidates),
+                selected_provider_id=first_result.provider_id if first_result else None,
+                selected_score=first_result.predicted_score if first_result else None,
+                latency_ms=(perf_counter() - started_at) * 1_000,
+            )
+        )
+        return response
 
 
 def demo_marketplace_state() -> MarketplaceState:
